@@ -9,12 +9,8 @@ import classes from './Checkout.css'
 class Checkout extends React.Component {
 
   state = {
-    ingredients: {
-      salad: 1,
-      meat: 1,
-      cheese: 1,
-      bacon: 1,
-    },
+    ingredients: null,
+    totalPrice: 0,
   }
 
   checkoutCanceledHandler = () => {
@@ -28,15 +24,22 @@ class Checkout extends React.Component {
     })
   }
 
-  componentDidMount() {
+  componentWillMount() {
     let params = new URLSearchParams(this.props.location.search);
     let ingredients = {}
+    let price = 0
     for (let param of params) {
-      console.log(param);
-      ingredients[param[0]] = +param[1]
+      if( param[0] === 'price') {
+        price = +param[1]
+      } else {
+        ingredients[param[0]] = +param[1]
+      }
     }
     console.log(ingredients)
-    this.setState({ingredients : ingredients})
+    this.setState({
+      ingredients: ingredients,
+      totalPrice: price,
+    })
   }
 
   render() {
@@ -47,7 +50,12 @@ class Checkout extends React.Component {
           checkoutCanceled={this.checkoutCanceledHandler}
           checkoutContinued={this.checkoutContinuedHandler}
         />
-        <Route path={`${this.props.match.url}/contact-data`} component={ContactData}/>
+        <Route
+          path={`${this.props.match.url}/contact-data`}
+          render={ () => {
+            return <ContactData
+                ingredients={this.state.ingredients}
+                totalPrice={this.state.totalPrice} /> }}/>
       </div>
     )
   }
