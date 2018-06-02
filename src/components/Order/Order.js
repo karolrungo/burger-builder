@@ -2,11 +2,25 @@ import React from 'react'
 
 import classes from './Order.css'
 
-const order = (props) => (
-  <div className={classes.Order}>
-    <p>Ingredients: Salad (1)</p>
-    <p>Total price: <strong>5.40 USD</strong></p>
-  </div>
-)
+const order = (props) => {
+  let ingredients= []
+  for(let ingredient in props.ingredients) {
+    ingredients.push((
+      <li key={ingredient}>
+        {`${ingredient} (${props.ingredients[ingredient]})`}
+      </li>
+    ))
+  }
+
+  return (
+    <div className={classes.Order}>
+      <p>Ingredients:</p>
+      <ul>
+        {ingredients}
+      </ul>
+      <p>Total price: <strong>{props.totalPrice.toFixed(2)} USD</strong></p>
+    </div>
+  )
+}
 
 export default order
