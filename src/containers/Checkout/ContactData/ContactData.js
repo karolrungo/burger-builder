@@ -73,9 +73,15 @@ class ContactData extends React.Component {
       loading: true,
     })
 
+    let formData = {}
+    for( let elementId in this.state.orderForm) {
+      formData[elementId] = this.state.orderForm[elementId].value
+    }
+
     const order = {
       ingredients: this.props.ingredients,
       price: this.props.totalPrice,
+      orderDara: formData,
     }
     axios.post('/orders.json', order)
       .then(resp => {
@@ -113,9 +119,9 @@ class ContactData extends React.Component {
     }
 
     let form = (
-      <form action="post">
+      <form action="post" onSubmit={this.orderHandler}>
         {formInputs}
-        <Button btnTypes={'Success'} clicked={this.orderHandler}>Order</Button>
+        <Button btnTypes={'Success'} >Order</Button>
       </form>
     )
 
