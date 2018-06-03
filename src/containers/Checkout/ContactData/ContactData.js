@@ -9,12 +9,58 @@ import Input from './../../../components/UI/Input/Input'
 import classes from './ContactData.css'
 
 class ContactData extends React.Component {
-  state ={
-    name: '',
-    email: '',
-    address: {
-      street: '',
-      postalCode: '',
+  state = {
+    orderForm: {
+      name: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'text',
+          placeholder: 'Your name',
+        },
+        value: '',
+      },
+      street: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'text',
+          placeholder: 'Street',
+        },
+        value: '',
+      },
+      zipCode: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'text',
+          placeholder: 'ZIP Code',
+        },
+        value: '',
+      },
+      country: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'text',
+          placeholder: 'Country',
+        },
+          value: '',
+      },
+      email: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'email',
+          placeholder: 'Your email',
+        },
+        value: '',
+      },
+      deliveryMethod: {
+        elementType: 'select',
+        elementConfig: {
+          options: [
+            {value: 'fastest', displayValue: 'Fastest'},
+            {value: 'cheapest', displayValue: 'Cheapest'},
+          ],
+        },
+        value: '',
+      },
     },
     loading: false,
   }
@@ -30,16 +76,6 @@ class ContactData extends React.Component {
     const order = {
       ingredients: this.props.ingredients,
       price: this.props.totalPrice,
-      customer: {
-        name: 'Karol Rungo',
-        address: {
-          street: 'Test Street 1',
-          zipCode: '12-345',
-          country: 'Poland',
-        },
-        email: 'test@test.com',
-      },
-      deliveryMethod: 'fastest'
     }
     axios.post('/orders.json', order)
       .then(resp => {
@@ -53,20 +89,39 @@ class ContactData extends React.Component {
       })
   }
 
-  render() {
-  let form = (
-    <form action="post">
-      <Input inputtype="input" type="text" name="name" placeholder="Enter your name" />
-      <Input inputtype="input" type="email" name="email" placeholder="Enter your email" />
-      <Input inputtype="input" type="text" name="street" placeholder="Street" />
-      <Input inputtype="input" type="text" name="postalcode" placeholder="Postal Code" />
-      <Button btnTypes={'Success'} clicked={this.orderHandler}>Order</Button>
-    </form>
-  )
+  inputChangedHandler = (event, elementId) => {
+    //NOT A DEEP COPY - need fix
+    const newState = {...this.state.orderForm}
+    newState[elementId].value = event.target.value
 
-  if (this.state.loading) {
-    form = <Spinner />
+    this.setState({
+      orderForm: newState,
+    })
   }
+
+  render() {
+    let formInputs = []
+    for(let input in this.state.orderForm) {
+      formInputs.push(
+        <Input
+          key={input}
+          elementType={this.state.orderForm[input].elementType}
+          elementConfig={this.state.orderForm[input].elementConfig}
+          value={this.state.orderForm[input].value}
+          changed={ (event) => this.inputChangedHandler(event, input)}/>
+      )
+    }
+
+    let form = (
+      <form action="post">
+        {formInputs}
+        <Button btnTypes={'Success'} clicked={this.orderHandler}>Order</Button>
+      </form>
+    )
+
+    if (this.state.loading) {
+      form = <Spinner />
+    }
 
     return (
       <div className={classes.ContactData}>
