@@ -18,6 +18,11 @@ class ContactData extends React.Component {
           placeholder: 'Your name',
         },
         value: '',
+        validation: {
+          required: true,
+        },
+        valid: false,
+        touched: false,
       },
       street: {
         elementType: 'input',
@@ -26,6 +31,11 @@ class ContactData extends React.Component {
           placeholder: 'Street',
         },
         value: '',
+        validation: {
+          required: true,
+        },
+        valid: false,
+        touched: false,
       },
       zipCode: {
         elementType: 'input',
@@ -34,6 +44,11 @@ class ContactData extends React.Component {
           placeholder: 'ZIP Code',
         },
         value: '',
+        validation: {
+          required: true,
+        },
+        valid: false,
+        touched: false,
       },
       country: {
         elementType: 'input',
@@ -41,7 +56,12 @@ class ContactData extends React.Component {
           type: 'text',
           placeholder: 'Country',
         },
-          value: '',
+        value: '',
+        validation: {
+          required: true,
+        },
+        valid: false,
+        touched: false,
       },
       email: {
         elementType: 'input',
@@ -50,6 +70,11 @@ class ContactData extends React.Component {
           placeholder: 'Your email',
         },
         value: '',
+        validation: {
+          required: true,
+        },
+        valid: false,
+        touched: false,
       },
       deliveryMethod: {
         elementType: 'select',
@@ -59,10 +84,14 @@ class ContactData extends React.Component {
             {value: 'cheapest', displayValue: 'Cheapest'},
           ],
         },
-        value: '',
+        validation: {},
+        value: 'fastest',
+        valid: true,
+        touched: false,
       },
     },
     loading: false,
+    formIsValid: false,
   }
 
   orderHandler = (event) => {
@@ -99,10 +128,28 @@ class ContactData extends React.Component {
     //NOT A DEEP COPY - need fix
     const newState = {...this.state.orderForm}
     newState[elementId].value = event.target.value
+    newState[elementId].valid = this.checkValidity(newState[elementId].value, newState[elementId].validation)
+    newState[elementId].touched = true
+
+    let formIsValid = true
+    for(let input in newState) {
+      formIsValid = newState[input].valid && formIsValid
+    }
 
     this.setState({
       orderForm: newState,
+      formIsValid: formIsValid,
     })
+  }
+
+  checkValidity(value, rules) {
+    let isValid =  true
+
+    if (rules.required) {
+      isValid = value.trim() !== ''
+    }
+
+    return isValid
   }
 
   render() {
@@ -114,14 +161,16 @@ class ContactData extends React.Component {
           elementType={this.state.orderForm[input].elementType}
           elementConfig={this.state.orderForm[input].elementConfig}
           value={this.state.orderForm[input].value}
-          changed={ (event) => this.inputChangedHandler(event, input)}/>
+          changed={ (event) => this.inputChangedHandler(event, input)}
+          shouldValidate={this.state.orderForm[input].validation && this.state.orderForm[input].touched}
+          invalid={!this.state.orderForm[input].valid}/>
       )
     }
 
     let form = (
       <form action="post" onSubmit={this.orderHandler}>
         {formInputs}
-        <Button btnTypes={'Success'} >Order</Button>
+        <Button btnTypes={'Success'} disabled={!this.state.formIsValid} >Order</Button>
       </form>
     )
 
