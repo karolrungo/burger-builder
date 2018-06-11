@@ -19,8 +19,6 @@ class BurgerBuilder extends Component {
 
     this.state = {
       purchasing: false,
-      loading: false,
-      error: false,
     }
   }
 
@@ -53,18 +51,7 @@ class BurgerBuilder extends Component {
   }
 
   componentDidMount() {
-    //axios.get('https://react-my-burger-41d14.firebaseio.com/ingredients.json')
-      //.then(resp => {
-        //this.setState({
-          //ingredients: resp.data
-        //})
-      //})
-      //.catch(error => {
-        //this.setState({
-          //error: true,
-        //})
-      //})
-
+    this.props.onInitIngredient()
   }
 
   render() {
@@ -75,33 +62,29 @@ class BurgerBuilder extends Component {
       disabledInfo[key] === 0 ? disabledInfo[key] = true : disabledInfo[key] = false
     }
 
-    let orderSummary =
-      <OrderSummary
-        ingredients={ this.props.ingredients }
-        canceled={ this.purchaseCancelHandler }
-        continued={ this.purchaseContinued }
-        price={ this.props.totalPrice }/>
+    let burger = this.props.error? <p>Ingredients can't be loaded</p> : <Spinner />
+    let orderSummary = <Spinner />
 
-    let burger =
-      <Aux>
-        <Burger ingredients={this.props.ingredients}/>
-        <BuildControls
-          ingredientAdded={this.props.onAddIngredient}
-          ingredientRemoved={this.props.onRemoveIngredient}
-          disabled={ disabledInfo }
-          price={ this.props.totalPrice }
-          purchaseble={ this.shouldOrderButtonBeAvaliable(this.props.ingredients) }
-          ordered={ this.purchaseHandler }
-        />
-      </Aux>
+    if(this.props.ingredients) {
+      orderSummary =
+        <OrderSummary
+          ingredients={ this.props.ingredients }
+          canceled={ this.purchaseCancelHandler }
+          continued={ this.purchaseContinued }
+          price={ this.props.totalPrice }/>
 
-    if(!this.props.ingredients) {
-      burger = this.state.error? <p>Ingredients can't be loaded</p> : <Spinner />
-      orderSummary = <Spinner />
-    }
-
-    if (this.state.loading) {
-     orderSummary = <Spinner />
+      burger =
+        <Aux>
+          <Burger ingredients={this.props.ingredients}/>
+          <BuildControls
+            ingredientAdded={this.props.onAddIngredient}
+            ingredientRemoved={this.props.onRemoveIngredient}
+            disabled={ disabledInfo }
+            price={ this.props.totalPrice }
+            purchaseble={ this.shouldOrderButtonBeAvaliable(this.props.ingredients) }
+            ordered={ this.purchaseHandler }
+          />
+        </Aux>
     }
 
     return (
@@ -126,6 +109,7 @@ const mapDispatchToProps = dispatch => {
   return {
     onAddIngredient: (ingType) => dispatch( burgerBuilderActions.addIngredient(ingType) ),
     onRemoveIngredient: (ingType) => dispatch( burgerBuilderActions.removeIngredient(ingType) ),
+    onInitIngredient: () => dispatch( burgerBuilderActions.initIngredients() )
   }
 }
 
