@@ -1,4 +1,7 @@
 import React from 'react'
+import { connect } from 'react-redux'
+
+import * as actions from './../../store/actions/index'
 
 import Input from './../../components/UI/Input/Input'
 import Button from './../../components/UI/Button/Button'
@@ -48,8 +51,6 @@ class Auth extends React.Component {
   }
 
   inputChangedHandler = (event, elementId) => {
-    console.log(event.target)
-    console.log(elementId)
     //NOT A DEEP COPY - need fix
     const newState = {...this.state.controls}
     newState[elementId].value = event.target.value
@@ -61,11 +62,17 @@ class Auth extends React.Component {
     })
   }
 
+  submitHandler = (event) => {
+    console.log('submit')
+    event.preventDefault()
+    console.log(this.props)
+    this.props.onAuth(this.state.controls['email'].value,
+                      this.state.controls['password'].value)
+  }
 
   render () {
     let formInputs = []
     for(let input in this.state.controls) {
-      console.log(this.state.controls[input])
       formInputs.push(
         <Input
           key={input}
@@ -78,18 +85,24 @@ class Auth extends React.Component {
       )}
 
     let form = (
-      <form action="">
+      <form action="post" onSubmit={this.submitHandler}>
         {formInputs}
+        <Button btnTypes='Success'>Submit</Button>
       </form>
     )
 
     return (
       <div className={classes.Auth}>
         {form}
-        <Button btnTypes='Success'>Submit</Button>
       </div>
     )
   }
 }
 
-export default Auth
+const mapDispatchToProps = dispatch => {
+  return {
+    onAuth: (email, password) => dispatch(actions.authInit(email, password)),
+  }
+}
+
+export default connect(null, mapDispatchToProps)(Auth)
