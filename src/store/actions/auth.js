@@ -32,7 +32,6 @@ export const authInit = (email, password, isSignUp) => {
 
     let url ='https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyDwv-4GV3r5Xl2jM51zcpBXouGgwo3WyyE'
     if(!isSignUp) {
-      console.log("ZMIANA STANU")
       url = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyDwv-4GV3r5Xl2jM51zcpBXouGgwo3WyyE'
     }
 
@@ -43,7 +42,7 @@ export const authInit = (email, password, isSignUp) => {
       })
       .catch(error => {
         console.log(error)
-        dispatch(authFailed(error))
+        dispatch(authFailed(error.response.data.error))
       })
   }
 }
