@@ -1,6 +1,5 @@
 import * as actionTypes from './actionTypes'
-
-import axios from './../../axios-orders'
+import axios from 'axios'
 
 export const authStart = () => {
   return {
@@ -22,10 +21,29 @@ export const authFailed = (error) => {
   }
 }
 
-export const authInit = (email, password) => {
-  console.log(`email: ${email}`)
-  console.log(`password: ${password}`)
+export const authInit = (email, password, isSignUp) => {
   return dispatch => {
     dispatch(authStart())
+    const authData = {
+      email,
+      password,
+      returnSecureToken: true,
+    }
+
+    let url ='https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyDwv-4GV3r5Xl2jM51zcpBXouGgwo3WyyE'
+    if(!isSignUp) {
+      console.log("ZMIANA STANU")
+      url = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyDwv-4GV3r5Xl2jM51zcpBXouGgwo3WyyE'
+    }
+
+    axios.post(url, authData)
+      .then(response => {
+        console.log(response)
+        dispatch(authSuccess(response.data))
+      })
+      .catch(error => {
+        console.log(error)
+        dispatch(authFailed(error))
+      })
   }
 }

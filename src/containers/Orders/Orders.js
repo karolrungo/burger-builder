@@ -7,8 +7,6 @@ import withErrorHandler from './../../hoc/withErrorHandler/withErrorHandler'
 import Order from './../../components/Order/Order'
 import Spinner from './../../components/UI/Spinner/Spinner'
 
-import classes from './Orders.css'
-
 class Orders extends React.Component {
   componentDidMount() {
     this.props.onFetchOrders()
