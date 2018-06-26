@@ -4,6 +4,7 @@ const initialState = {
   ingredients: null,
   totalPrice: 4,
   error: false,
+  building: false,
 }
 
 const ingredient_prices = {
@@ -23,7 +24,8 @@ const reducer = (state = initialState, action) => {
           ...state.ingredients,
           [action.ingredientName]: state.ingredients[action.ingredientName] + 1
         },
-        totalPrice: state.totalPrice + ingredient_prices[action.ingredientName]
+        totalPrice: state.totalPrice + ingredient_prices[action.ingredientName],
+        building: true,
       }
     case(actionTypes.REMOVE_INGREDIENT):
       console.log("removing ingredient")
@@ -33,7 +35,8 @@ const reducer = (state = initialState, action) => {
           ...state.ingredients,
           [action.ingredientName]: state.ingredients[action.ingredientName] - 1
         },
-        totalPrice: state.totalPrice - ingredient_prices[action.ingredientName]
+        totalPrice: state.totalPrice - ingredient_prices[action.ingredientName],
+        building: true,
       }
     case(actionTypes.SET_INGREDIENTS):
       console.log('ingredients fetched from DB')
@@ -42,6 +45,7 @@ const reducer = (state = initialState, action) => {
         ingredients: action.ingredients,
         totalPrice: 4,
         error: false,
+        building: false,
       }
     case(actionTypes.SET_INGREDIENTS_FAILED):
       return {
