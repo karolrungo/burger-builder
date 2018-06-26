@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 
 import * as actions from './../../store/actions/index'
 
@@ -109,8 +110,14 @@ class Auth extends React.Component {
       error = <p>{this.props.error.message}</p>
     }
 
+    let authRedirect = null
+    if (this.props.isAuthenticated) {
+      authRedirect = <Redirect to ='/' />
+    }
+
     return (
       <div className={classes.Auth}>
+        {authRedirect}
         {form}
         {error}
         <Button
@@ -125,6 +132,7 @@ const mapStateToProps = state => {
   return {
     loading: state.auth.loading,
     error: state.auth.error,
+    isAuthenticated: state.auth.token !== null,
   }
 }
 
