@@ -12,4 +12,5 @@ export {
 
 export {
   authInit,
+  logout,
 } from './auth'
