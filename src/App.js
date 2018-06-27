@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Switch, Route, withRouter } from 'react-router-dom'
+import { Switch, Route, withRouter, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 import * as actions from './store/actions/index'
 
@@ -16,17 +16,37 @@ class App extends Component {
   }
 
   render() {
+    let routes = (
+      <Switch>
+        <Route exact path='/' component={BurgerBuilder} />
+        <Route path='/auth/' component={Auth} />
+        <Redirect to='/' />
+      </Switch>
+    )
+
+    if (this.props.isAuthenticated) {
+      routes = (
+        <Switch>
+          <Route path='/checkout/' component={Checkout} />
+          <Route path='/orders/' component={Orders} />
+          <Route path='/logout' component={Logout} />
+          <Route exact path='/' component={BurgerBuilder} />
+          <Redirect to='/' />
+        </Switch>
+      )
+    }
+
     return (
       <Layout>
-        <Switch>
-          <Route exact path='/' component={BurgerBuilder} />
-          <Route path='/checkout/' component={Checkout} />
-          <Route path='/my-orders/' component={Orders} />
-          <Route path='/auth/' component={Auth} />
-          <Route path='/logout' component={Logout} />
-        </Switch>
+        {routes}
       </Layout>
     );
+  }
+}
+
+const mapsStateToProps = state => {
+  return {
+    isAuthenticated: state.auth.token !== null,
   }
 }
 
@@ -36,4 +56,4 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default withRouter(connect(null, mapDispatchToProps)(App))
+export default withRouter(connect(mapsStateToProps, mapDispatchToProps)(App))
