@@ -2,7 +2,6 @@ import React from 'react'
 import Logo from './../../Logo/Logo'
 import NavigationItems from './../NavigationItems/NavigationItems'
 import Backdrop from './../../UI/Backdrop/Backdrop'
-import Aux from './../../../hoc/Aux/Aux'
 
 import classes from './SideDrawer.css'
 
@@ -13,7 +12,7 @@ const sideDrawer = (props) => {
   }
 
   return (
-    <Aux>
+    <React.Fragment>
       <div className={attachedClasses.join(' ')} onClick={props.closed}>
        <div className={classes.Logo}>
           <Logo />
@@ -25,7 +24,7 @@ const sideDrawer = (props) => {
       <Backdrop
         show={props.open}
         clicked={props.closed}/>
-    </Aux>
+    </React.Fragment>
   )
 }
 
