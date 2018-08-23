@@ -1,5 +1,5 @@
 import * as actionTypes from './actionTypes'
-import axios from './../../axios-orders'
+import axios from 'axios'
 
 export const purchaseBurgerSuccess = (id, orderData) => {
   return {
@@ -64,11 +64,11 @@ export const fetchOrdersStart = () => {
   }
 }
 
-export const fetchOrders = (token, userId) => {
-  return dispatch => {
+export const fetchOrders = (token, userId) => (dispatch) => {
     dispatch(fetchOrdersStart())
     const queryParams = `?auth=${token}&orderBy="userId"&equalTo="${userId}"`
-    axios.get('/orders.json' + queryParams)
+
+    return axios.get('https://react-my-burger-41d14.firebaseio.com/orders.json' + queryParams)
       .then(resp => {
         const fetchedData = []
         for (let key in resp.data) {
@@ -81,6 +81,4 @@ export const fetchOrders = (token, userId) => {
       })
       .catch( error => dispatch(fetchOrdersFailed(error)))
 
-    //axiosStuff
-  }
 }
