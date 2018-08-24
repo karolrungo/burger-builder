@@ -16,7 +16,6 @@ export const removeIngredient = (name) => {
 }
 
 export const setIngredients = (ingredients) => {
-  console.log("DISPACZING")
   return {
     type: actionTypes.SET_INGREDIENTS,
     ingredients: ingredients,
@@ -29,16 +28,12 @@ export const setIngredeintsFailed = () => {
   }
 }
 
-export const initIngredients = () => {
-  console.log('siema')
-  return dispatch => {
-    axios.get('https://react-my-burger-41d14.firebaseio.com/ingredients.json')
-      .then(resp => {
-        console.log('DANE POBRANE')
-        dispatch(setIngredients(resp.data))
-      })
-      .catch(error => {
-        dispatch(setIngredeintsFailed())
-      })
-    }
+export const initIngredients = () => dispatch => {
+  return axios.get('https://react-my-burger-41d14.firebaseio.com/ingredients.json')
+    .then(resp => {
+      dispatch(setIngredients(resp.data))
+    })
+    .catch(error => {
+      dispatch(setIngredeintsFailed())
+    })
 }
