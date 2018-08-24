@@ -1,3 +1,4 @@
+import axios from './../../axios-orders'
 import moxios from 'moxios';
 import thunk from 'redux-thunk';
 
@@ -25,11 +26,11 @@ const formatedOrders = [{
 
 describe('order actions', () => {
   beforeEach(function () {
-    moxios.install();
+    moxios.install(axios);
   });
 
   afterEach(function () {
-    moxios.uninstall();
+    moxios.uninstall(axios);
   });
 
   it('creates FETCH_ORDER_SUCCESS after successfuly fetching orders', () => {
@@ -39,23 +40,36 @@ describe('order actions', () => {
         status: 200,
         response: ordersMock,
       });
-  });
+    });
 
-
-      const expectedActions = [
-    { type: actionTypes.FETCH_ORDERS_START },
-    { type: actionTypes.FETCH_ORDERS_SUCCESS, orders: formatedOrders },
-  ];
+    const expectedActions = [
+      { type: actionTypes.FETCH_ORDERS_START },
+      { type: actionTypes.FETCH_ORDERS_SUCCESS, orders: formatedOrders },
+    ];
 
     const store = mockStore({ posts: {} })
 
     return store.dispatch(actions.fetchOrders("TOKEN", "USER_ID")).then(() => {
-    // return of async actions
       expect(store.getActions()).toEqual(expectedActions);
     });
+  })
 
-    //store.dispatch(actions.fetchOrders("TOKEN", "USER_ID"))
-    //console.log(store.getActions())
-    //expect(store.getActions()).toEqual(expectedActions);
+  it('creates FETCH_ORDER_FAILED after failed fetching orders', () => {
+    const error = new Error('Request failed with status code 500')
+    moxios.stubRequest(/.orders.json*/, {
+      status: 500,
+      response: error
+    });
+
+    const expectedActions = [
+      { type: actionTypes.FETCH_ORDERS_START },
+      { type: actionTypes.FETCH_ORDERS_FAILED, error: error },
+    ];
+
+    const store = mockStore({ posts: {} })
+
+    return store.dispatch(actions.fetchOrders("TOKEN", "USER_ID")).then(() => {
+      expect(store.getActions()).toEqual(expectedActions);
+    });
   })
 })
