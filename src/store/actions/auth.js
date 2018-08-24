@@ -22,6 +22,7 @@ export const authFailed = (error) => {
 }
 
 export const logout = () => {
+  console.log('wyloguj mnie')
   localStorage.removeItem('token')
   localStorage.removeItem('expiriationDate')
   localStorage.removeItem('userId')
@@ -31,7 +32,6 @@ export const logout = () => {
 }
 
 export const checkAuthTimeout = (expiriationTime) => {
-  console.log(expiriationTime * 1000)
   return dispatch => {
     setTimeout(() => { dispatch(logout()) }, expiriationTime * 1000)
   }
@@ -52,7 +52,6 @@ export const authInit = (email, password, isSignUp) => dispatch => {
 
   return axios.post(url, authData)
     .then(response => {
-      console.log(response)
       dispatch(authSuccess(response.data))
       dispatch(checkAuthTimeout(response.data.expiresIn))
       localStorage.setItem('token', response.data.idToken)
