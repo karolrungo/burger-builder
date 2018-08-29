@@ -10,14 +10,15 @@ const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
 const localStorageMock = {
-  getItem: jest.fn(),
+  removeItem: jest.fn(),
   setItem: jest.fn(),
-  clear: jest.fn()
 };
 global.localStorage = localStorageMock;
 
 describe('auth action', () => {
-  it('asdf', () => {
+  it('asdf', (done) => {
+
+    jest.useFakeTimers();
 
     const mockedResponseData = {
       expiresIn: 0,
@@ -31,13 +32,15 @@ describe('auth action', () => {
     const expectedActions = [
       { type: actionTypes.AUTH_START },
       { type: actionTypes.AUTH_SUCCESS, authData: mockedResponseData },
+      { type: actionTypes.AUTH_LOGOUT,  },
     ];
 
     const store = mockStore({ posts: {} })
 
-    return store.dispatch(actions.authInit('EMAIL', 'PASSWD', 'IS_LOGGED')).then(() => {
+    store.dispatch(actions.authInit('EMAIL', 'PASSWD', 'IS_LOGGED')).then(() => {
+      jest.runAllTimers();
       expect(store.getActions()).toEqual(expectedActions);
-      console.log(store.getActions())
-    });
+      done();
+    })
   })
 })
